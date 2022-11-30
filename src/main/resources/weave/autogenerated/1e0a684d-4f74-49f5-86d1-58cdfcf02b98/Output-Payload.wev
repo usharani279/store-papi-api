@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_1e0a684d_4f74_49f5_86d1_58cdfcf02b98_Output_Payload = {
+  address?: String, 
+  customerId?: Number, 
+  phoneNum?: Number, 
+  customerName?: String, 
+  _?: Any
+}
+

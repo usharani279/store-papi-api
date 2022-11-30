@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <apikit:config name="store-api-config" api="store-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="store-api-main">
+        <http:listener path="/api/*" config-ref="store-api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="store-api-config" />
+		<error-handler ref="error-p-Error_Handler" />
+
+        
+    </flow>
+    <flow name="put:\customer:store-api-config">
+        <flow-ref doc:name="calling updating-Customer_Flow" doc:id="d9e31ae9-d64c-4964-bcf4-54e79bb23766" name="updating-Customer_Flow" />
+    </flow>
+    <flow name="put:\product:store-api-config">
+        <flow-ref doc:name="calling updating-Product-flow" doc:id="c6a06d58-cdf3-4e72-ba8e-e3bc2994ee68" name="updating-Product-flow" />
+    </flow>
+    <flow name="delete:\customer:store-api-config">
+        <flow-ref doc:name="calling deleteCustomer_Flow" doc:id="6f509bf8-c77c-4e36-89c5-3dbeca376906" name="deleteCustomer_Flow" />
+    </flow>
+    <flow name="delete:\product:store-api-config">
+        <flow-ref doc:name="calling delete-Product-flow" doc:id="b51513e8-155f-4a9c-bf3e-a5d82d2bb035" name="delete-Product-flow" />
+    </flow>
+    <flow name="get:\customer:store-api-config">
+        <flow-ref doc:name="calling fetching-customerDetails-flow" doc:id="2d560f1e-ec83-4051-94b5-e50de91930e4" name="fetching-customerDetails-flow" />
+    </flow>
+    <flow name="get:\product:store-api-config">
+        <flow-ref doc:name="calling fetching-ProductData-flow" doc:id="32ac5ee5-41d6-4e82-970e-0a5a351e3a40" name="fetching-ProductData-flow" />
+    </flow>
+    <flow name="get:\transaction:store-api-config">
+        <flow-ref doc:name="calling fetchTransactionDetails_Flow" doc:id="999e25b9-53cb-45c8-989f-a5daf40227c8" name="fetchTransactionDetails_Flow" />
+    </flow>
+    <flow name="post:\customer:application\json:store-api-config">
+        <flow-ref doc:name="calling inserting-Customer-flow" doc:id="a3922199-d7cc-4697-9658-2a23c5630f80" name="inserting-Customer-flow" />
+    </flow>
+    <flow name="post:\product:application\json:store-api-config">
+        <flow-ref doc:name="calling inserting-ProductData-flow" doc:id="c7bf1bcc-abcc-46c8-b9de-f129c9186b1f" name="inserting-ProductData-flow" />
+    </flow>
+    <flow name="get:\transactionReport:store-api-config">
+		<flow-ref doc:name="calling transactionReport-flow" doc:id="6f1dbfb8-f54d-4edd-acc1-6b7922677aac" name="transactionReport-flow"/>
+    </flow>
+</mule>
