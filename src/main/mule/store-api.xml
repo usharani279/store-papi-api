@@ -17,33 +17,53 @@
         
     </flow>
     <flow name="put:\customer:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="753a55e3-9bea-46cc-9b40-1d45d07f970d" message="Start logger"/>
         <flow-ref doc:name="calling updating-Customer_Flow" doc:id="d9e31ae9-d64c-4964-bcf4-54e79bb23766" name="updating-Customer_Flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="508398c5-a1b3-412a-aab0-b8bceef8adc1" message="End logger"/>
     </flow>
     <flow name="put:\product:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="e5d89932-34c2-42fe-885b-44a6e41f79ac" message="Start logger"/>
         <flow-ref doc:name="calling updating-Product-flow" doc:id="c6a06d58-cdf3-4e72-ba8e-e3bc2994ee68" name="updating-Product-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="b109e473-5bb9-4b61-82ff-54de1d7d394e" message="End logger"/>
     </flow>
     <flow name="delete:\customer:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="d481fab2-8429-42e9-acb7-e625d671dab4" message="Start logger"/>
         <flow-ref doc:name="calling deleteCustomer_Flow" doc:id="6f509bf8-c77c-4e36-89c5-3dbeca376906" name="deleteCustomer_Flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="9409d46a-a81a-4bfa-9394-9504b5d503e0" message="End logger"/>
     </flow>
     <flow name="delete:\product:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="ca6583e9-e52c-488d-8bb2-61779aed98b9" message="Start logger"/>
         <flow-ref doc:name="calling delete-Product-flow" doc:id="b51513e8-155f-4a9c-bf3e-a5d82d2bb035" name="delete-Product-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="f79446d9-170c-46fb-8fce-6dd2188f87e0" message="End logger"/>
     </flow>
     <flow name="get:\customer:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="bd44ca26-93bf-446e-a1de-a8fbc2ce854b" message="Start logger"/>
         <flow-ref doc:name="calling fetching-customerDetails-flow" doc:id="2d560f1e-ec83-4051-94b5-e50de91930e4" name="fetching-customerDetails-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="a6d9459e-97a7-4f58-baa5-b984f7354750" message="End logger"/>
     </flow>
     <flow name="get:\product:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="5502a2a4-7074-4885-b2a4-9c0e7273da30" message="Start logger"/>
         <flow-ref doc:name="calling fetching-ProductData-flow" doc:id="32ac5ee5-41d6-4e82-970e-0a5a351e3a40" name="fetching-ProductData-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="cf361762-2393-4c20-a434-5a06549c8a2d" message="End logger"/>
     </flow>
     <flow name="get:\transaction:store-api-config">
+         <logger level="INFO" doc:name="Start logger" doc:id="881c86ad-b9db-4ff2-9691-f9c1090bf9fc" message="Start logger"/>
         <flow-ref doc:name="calling fetchTransactionDetails_Flow" doc:id="999e25b9-53cb-45c8-989f-a5daf40227c8" name="fetchTransactionDetails_Flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="6e0e7e08-5156-4cc0-9823-6d6f6366955e" message="End logger"/>
     </flow>
     <flow name="post:\customer:application\json:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="febd58c1-511e-4770-8cf2-2cefd3d064a1" message="Start logger"/>
         <flow-ref doc:name="calling inserting-Customer-flow" doc:id="a3922199-d7cc-4697-9658-2a23c5630f80" name="inserting-Customer-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="75ce5107-14fc-4114-9e65-3124a468dc45" message="End logger"/>
     </flow>
     <flow name="post:\product:application\json:store-api-config">
+        <logger level="INFO" doc:name="Start logger" doc:id="a4ce7253-71b0-4e89-87a7-c70401527a85" message="Start logger"/>
         <flow-ref doc:name="calling inserting-ProductData-flow" doc:id="c7bf1bcc-abcc-46c8-b9de-f129c9186b1f" name="inserting-ProductData-flow" />
+        <logger level="INFO" doc:name="End logger" doc:id="37430bfa-2ff1-4fcb-bcce-ce9180cf7e91" message="End logger"/>
     </flow>
     <flow name="get:\transactionReport:store-api-config">
+		<logger level="INFO" doc:name="Start logger" doc:id="1036c953-2c93-4e39-b9fc-cc06bf860b37" message="Start logger"/>
 		<flow-ref doc:name="calling transactionReport-flow" doc:id="6f1dbfb8-f54d-4edd-acc1-6b7922677aac" name="transactionReport-flow"/>
+        <logger level="INFO" doc:name="End logger" doc:id="22f51408-1004-47cb-b364-3c8b5243fd75" message="End logger"/>
     </flow>
 </mule>

@@ -7,12 +7,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	<http:listener-config name="store-api-httpListenerConfig" doc:name="HTTP Listener config" doc:id="b2720df5-a72a-4042-8ae5-f76a1ba6df78" >
-		<http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
+		<http:listener-connection host="${http.listener.host}" port="${secure::http.listener.port}" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="93ea145a-7290-4464-88a2-5d3e4e116787" >
 		<http:request-connection host="${secure::http.request.host}" port="${secure::http.request.port}" connectionIdleTimeout="3000000" />
 	</http:request-config>
 	<configuration-properties doc:name="Configuration properties" doc:id="574f584b-8aac-4056-a25b-cd02ba8a3029" file="properties/${env}.yaml" />
 	<configuration doc:name="Configuration" doc:id="d918a5db-4910-489b-8e62-ff6a525ffafe" defaultErrorHandler-ref="error-p-Error_Handler" />
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="4b0769b7-05f1-4e49-b55f-e7e6fc1e70e8" file="properties/${env}.yaml" key="${key}"/>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="4b0769b7-05f1-4e49-b55f-e7e6fc1e70e8" file="secure.yaml" key="${key}"/>
 </mule>

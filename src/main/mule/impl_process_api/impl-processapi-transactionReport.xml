@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	
+	
+	<sub-flow name="transactionReport-flow" doc:id="8d62ed30-1261-46ab-bbf0-f697d2e77c68" >
+		<logger level="INFO" doc:name="start Logger" doc:id="a6fab930-c1d3-4fed-9e4a-676aac28936c" message='#["start logger"]'/>
+		<ee:transform doc:name="metaData" doc:id="1dfa858a-d8a0-4e79-843e-b4e25c558a02">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="startDate"><![CDATA[%dw 2.0
+output application/json
+---
+((attributes.queryParams.transactionDate splitBy  "to") [0])]]></ee:set-variable>
+				<ee:set-variable variableName="endDate"><![CDATA[%dw 2.0
+output application/json
+---
+((attributes.queryParams.transactionDate splitBy  "to") [-1])]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="Requesting system transactionReport flow" doc:id="9212b5c4-5876-44fc-a26f-e6f7123ad252" path="${http.request.transactionReportPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"transactionDate" : attributes.queryParams.transactionDate
+	
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="transactionReport payload" doc:id="6c83372c-5261-4e98-be8e-abcb4469fa07">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="582e5ea3-017d-4e3d-a9c3-07db08cdcc34" message='#["end logger"]'/>
+	</sub-flow>
+	
+</mule>

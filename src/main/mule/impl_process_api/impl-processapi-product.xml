@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="inserting-ProductData-flow" doc:id="4a4d77f4-995f-47de-9bdf-97f33f940a71" >
+		<logger level="INFO" doc:name="start Logger" doc:id="8876096f-917d-4ceb-a2de-7fb5edf1c686" message='#["insert start logger"]'/>
+		<ee:transform doc:name="inputData" doc:id="17d7a1d8-431c-43dc-8837-2614323ff60f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="Requesting system product data flow" doc:id="bc5354d1-40d8-4a62-914d-9b299ba5caed" config-ref="HTTP_Request_configuration" path="${http.request.productPath}" responseTimeout="8000000" />
+		<ee:transform doc:name="product payload" doc:id="ff7a7dfa-3063-416e-b712-c44ede955adc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="Sno" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.serialNo]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="994efe7c-ace7-415e-90c4-1df032ca88d9" >
+			<when expression="#[sizeOf(payload.serialNo filter ($ == vars.Sno)) &gt;0]">
+				<ee:transform doc:name="product existed message" doc:id="59edd334-8bec-4c5e-9f6f-0b72becba770" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"product serialNo already existed"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<http:request method="POST" doc:name="Requesting system product data flow" doc:id="c8b47eb6-69b0-4aec-aeb2-4595e4ea0e50" path="${http.request.productPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:body><![CDATA[#[vars.inputData]]]></http:body>
+		</http:request>
+				<ee:transform doc:name="product payload" doc:id="e3a792d1-520a-4846-bfd6-be13ef08453d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="end Logger " doc:id="10ef700c-13f0-4a71-b616-9469b4fbb3b2" message='#["insert end logger"]'/>
+	</sub-flow>
+	<sub-flow name="fetching-ProductData-flow" doc:id="a5589892-3c87-49c5-be72-000afff90023" >
+		<logger level="INFO" doc:name="start Logger" doc:id="4137448e-8468-46a7-9adb-d0ec55c2dcf0" message='#["fetching start logger"]'/>
+		<http:request method="GET" doc:name="Requesting system product data flow" doc:id="2d5857ac-06b0-4367-9544-42f94779a7bb" path="${http.request.productPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration"/>
+		<ee:transform doc:name="product payload" doc:id="e2f079ec-7afa-42d9-8f6f-e43bc35de6b4">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="6b66376d-4bb9-4bb3-bf7f-87d2581f2780" message='#["fetching end logger"]'/>
+	</sub-flow>
+	<sub-flow name="updating-Product-flow" doc:id="85c20240-087c-480a-847a-6abe9a25acab" >
+		<logger level="INFO" doc:name="start Logger" doc:id="61249f29-2ec1-428e-b52e-73cde767d39f" message='#["update start logger"]'/>
+		<ee:transform doc:name="metaData" doc:id="564e76ec-9c12-454b-b57f-4ab19673d681" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.productId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="PUT" doc:name="Requesting system product data flow" doc:id="da30b1a9-0c49-403f-b142-13b5ee6c5c18" path="${http.request.productPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:body ><![CDATA[#[vars.inputData]]]></http:body>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"productId" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="end Logger" doc:id="c528a686-d044-40ed-8874-41845a174a0f" message='#["update end logger"]'/>
+	</sub-flow>
+	<sub-flow name="delete-Product-flow" doc:id="0ec63f49-b352-4fc0-8ece-4781105fad78" >
+		<logger level="INFO" doc:name="start Logger" doc:id="603b6336-bb1a-4118-8536-afb2a8cc23f8" message='#["delete start logger"]'/>
+		<ee:transform doc:name="metaData" doc:id="96f728b7-e909-44cd-9978-d1b7e56194f6" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.productId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="DELETE" doc:name="Requesting system product flow" doc:id="20e17cc9-f8e3-4c8c-9fe3-bccdb34303a3" path="${http.request.productPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"productId" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="end Logger" doc:id="1e1e3b74-161f-4ddc-9b46-5ad5ebb4ca12" message='#["delete end logger"]'/>
+	</sub-flow>
+	</mule>

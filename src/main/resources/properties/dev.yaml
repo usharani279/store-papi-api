@@ -1,11 +1,8 @@
 http:
  listener:
-  port: "8082"
   host: "0.0.0.0"
   
  request:
-  port: "![WwXWmbK97cv0d1EoecAa3w==]"
-  host: "![HRihUFFum6aIMdBnQr3UHg==]"
   customerPath: "/api/customer"
   productPath: "/api/product"
   transactionPath: "/api/transaction"

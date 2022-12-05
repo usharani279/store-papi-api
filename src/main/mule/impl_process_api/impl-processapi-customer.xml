@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="inserting-Customer-flow" doc:id="3320a4b2-32cd-4b41-ab68-c9261fc6b28c" >
+		<logger level="INFO" doc:name="process layer start logger" doc:id="aea36154-5590-4dc3-bec8-0fdf9933bdb9" message="#[payload]" />
+		<ee:transform doc:name="storing inputData" doc:id="0960f1c2-8a55-4ba7-b3c2-9513613e1b19" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="Requesting system customer data flow" doc:id="d4e67a50-10e6-4628-ac8c-371f13e627f2" config-ref="HTTP_Request_configuration" path="${http.request.customerPath}" responseTimeout="8000000" />
+		<ee:transform doc:name="payload of customer" doc:id="5717fef0-6198-4b40-8904-01a5e132da13">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="data"><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.phoneNum as String]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="b278c830-2e43-4305-a6dd-ae5cee7e8e76" >
+			<when expression='#[sizeOf(payload.phoneNum filter ((item, index) -&gt; item==vars.data))&gt;0]'>
+				<ee:transform doc:name="customer Existed" doc:id="08532766-d912-4174-a0a1-b539bcdc1e93">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+ "customerId already existed" ]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<http:request method="POST" doc:name="Requesting system customer insert flow" doc:id="1d922fbb-5e4c-4b9d-9449-0b150ab00d38" path="${http.request.customerPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:body><![CDATA[#[vars.inputData]]]></http:body>
+		</http:request>
+				<ee:transform doc:name="payload of customer" doc:id="640622ff-994c-4101-8917-b7c2c5ed83c5">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="final payload" doc:id="9826e9f5-2c4a-40b7-afb8-0916365c2733" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="2378d6b4-c580-4fee-800a-9fb8cccb0ce2" message="#[payload]"/>
+	
+</sub-flow>
+	<sub-flow name="fetching-customerDetails-flow" doc:id="e51d36ce-596e-4ec5-a1df-58ee2d330d77" >
+		<logger level="INFO" doc:name="start Logger" doc:id="d2135777-0595-4e0c-b98c-211579aa6ccb" message='#["start logger"]'/>
+		<http:request method="GET" doc:name="Requesting system customer data flow" doc:id="e7bd0374-dc75-4e5d-9d6e-94740a5a618a" path="${http.request.customerPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+		</http:request>
+		<ee:transform doc:name="customer payload" doc:id="9f86d4f7-04d1-45ed-bf28-cdc75de1f384" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="8084dd9d-09f3-46e6-b5f7-3c141667da3c" message='#["end logger"]'/>
+	</sub-flow>
+	<sub-flow name="updating-Customer_Flow" doc:id="8342ebb5-a429-484a-8a1d-777af6a8210c" >
+		<logger level="INFO" doc:name="start Logger" doc:id="38f30d25-68df-4310-aecc-e6a6c0560106" message='#["update start logger"]'/>
+		<ee:transform doc:name="metaData" doc:id="12111d3d-3790-4192-931f-83960b9f873f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputData" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.customerId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="PUT" doc:name="Requesting system customer data flow" doc:id="65c3f381-09d4-486a-a0d4-149a88fc1765" path="${http.request.customerPath}" responseTimeout="800000000" config-ref="HTTP_Request_configuration">
+			<http:body ><![CDATA[#[vars.inputData]]]></http:body>
+			<http:query-params ><![CDATA[#[output application/json
+---
+{
+	"customerId" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="customer payload" doc:id="29c17eb0-e4d5-48fc-b31d-e7d6839ca635" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="3974b960-f06d-44f2-a9b6-5782999e2063" message='#["update end logger"]'/>
+	</sub-flow>
+	<sub-flow name="deleteCustomer_Flow" doc:id="a8f7ae72-f519-49d9-ac49-257bf88650ab" >
+		<logger level="INFO" doc:name="start Logger" doc:id="5a995d81-4136-4f95-b7eb-a2629bb2b2a6" message='#["delete start logger"]'/>
+		<ee:transform doc:name="metaData" doc:id="95b47536-d7e4-4cfd-90b2-3e693ea60b67" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.customerId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="Requesting system customer flow" doc:id="4391d7f6-d1d4-4a20-ad85-f72fd15cbba4" path="${http.request.customerPath}" responseTimeout="8000000" config-ref="HTTP_Request_configuration">
+			<http:query-params ><![CDATA[#[output application/json
+---
+{
+	"customerId" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="customer payload" doc:id="3b2effa2-4657-4c7b-9195-fc386184f605" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="d7f5d108-c78f-40b0-9359-b6f9fe14524a" />
+	</sub-flow>
+	</mule>
